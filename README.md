@@ -1,43 +1,72 @@
 # CallerWithContext
 
-Welcome to your new gem! In this directory, you'll find the files you need to be able to package up your Ruby library into a gem. Put your Ruby code in the file `lib/caller_with_context`. To experiment with that code, run `bin/console` for an interactive prompt.
+Adds lines of context from the source file around each of the lines in a stack trace.
 
-TODO: Delete this and the text above, and describe your gem
+So, this:
 
-## Installation
-
-Add this line to your application's Gemfile:
-
-```ruby
-gem 'caller_with_context'
+```
+/home/jeff/projects/backtrace/caller_with_context/lib/caller_with_context/caller.rb:24:in `show'
+/home/jeff/projects/backtrace/caller_with_context/spec/caller_spec.rb:13:in `block (2 levels) in <module:CallerWithContext>'
+/home/jeff/.rvm/gems/ruby-2.6.3/gems/rspec-core-3.8.1/lib/rspec/core/example.rb:254:in `instance_exec'
+/home/jeff/.rvm/gems/ruby-2.6.3/gems/rspec-core-3.8.1/lib/rspec/core/example.rb:254:in `block in run'
+/home/jeff/.rvm/gems/ruby-2.6.3/gems/rspec-core-3.8.1/lib/rspec/core/example.rb:500:in `block in with_around_and_singleton_context_hooks'
+/home/jeff/.rvm/gems/ruby-2.6.3/gems/rspec-core-3.8.1/lib/rspec/core/example.rb:457:in `block in with_around_example_hooks'
+/home/jeff/.rvm/gems/ruby-2.6.3/gems/rspec-core-3.8.1/lib/rspec/core/hooks.rb:464:in `block in run'
+/home/jeff/.rvm/gems/ruby-2.6.3/gems/rspec-core-3.8.1/lib/rspec/core/hooks.rb:602:in `run_around_example_hooks_for'
+/home/jeff/.rvm/gems/ruby-2.6.3/gems/rspec-core-3.8.1/lib/rspec/core/hooks.rb:464:in `run'
+/home/jeff/.rvm/gems/ruby-2.6.3/gems/rspec-core-3.8.1/lib/rspec/core/example.rb:457:in `with_around_example_hooks'
+/home/jeff/.rvm/gems/ruby-2.6.3/gems/rspec-core-3.8.1/lib/rspec/core/example.rb:500:in `with_around_and_singleton_context_hooks'
+/home/jeff/.rvm/gems/ruby-2.6.3/gems/rspec-core-3.8.1/lib/rspec/core/example.rb:251:in `run'
+/home/jeff/.rvm/gems/ruby-2.6.3/gems/rspec-core-3.8.1/lib/rspec/core/example_group.rb:629:in `block in run_examples'
+/home/jeff/.rvm/gems/ruby-2.6.3/gems/rspec-core-3.8.1/lib/rspec/core/example_group.rb:625:in `map'
+/home/jeff/.rvm/gems/ruby-2.6.3/gems/rspec-core-3.8.1/lib/rspec/core/example_group.rb:625:in `run_examples'
+/home/jeff/.rvm/gems/ruby-2.6.3/gems/rspec-core-3.8.1/lib/rspec/core/example_group.rb:591:in `run'
+/home/jeff/.rvm/gems/ruby-2.6.3/gems/rspec-core-3.8.1/lib/rspec/core/runner.rb:116:in `block (3 levels) in run_specs'
+/home/jeff/.rvm/gems/ruby-2.6.3/gems/rspec-core-3.8.1/lib/rspec/core/runner.rb:116:in `map'
+/home/jeff/.rvm/gems/ruby-2.6.3/gems/rspec-core-3.8.1/lib/rspec/core/runner.rb:116:in `block (2 levels) in run_specs'
+/home/jeff/.rvm/gems/ruby-2.6.3/gems/rspec-core-3.8.1/lib/rspec/core/configuration.rb:2008:in `with_suite_hooks'
+/home/jeff/.rvm/gems/ruby-2.6.3/gems/rspec-core-3.8.1/lib/rspec/core/runner.rb:111:in `block in run_specs'
+/home/jeff/.rvm/gems/ruby-2.6.3/gems/rspec-core-3.8.1/lib/rspec/core/reporter.rb:74:in `report'
+/home/jeff/.rvm/gems/ruby-2.6.3/gems/rspec-core-3.8.1/lib/rspec/core/runner.rb:110:in `run_specs'
+/home/jeff/.rvm/gems/ruby-2.6.3/gems/rspec-core-3.8.1/lib/rspec/core/runner.rb:87:in `run'
+/home/jeff/.rvm/gems/ruby-2.6.3/gems/rspec-core-3.8.1/lib/rspec/core/runner.rb:71:in `run'
+/home/jeff/.rvm/gems/ruby-2.6.3/gems/rspec-core-3.8.1/lib/rspec/core/runner.rb:45:in `invoke'
+/home/jeff/.rvm/gems/ruby-2.6.3/gems/rspec-core-3.8.1/exe/rspec:4:in `<top (required)>'
+/home/jeff/.rvm/gems/ruby-2.6.3/bin/rspec:23:in `load'
+/home/jeff/.rvm/gems/ruby-2.6.3/bin/rspec:23:in `<main>'
+/home/jeff/.rvm/gems/ruby-2.6.3/bin/ruby_executable_hooks:24:in `eval'
+/home/jeff/.rvm/gems/ruby-2.6.3/bin/ruby_executable_hooks:24:in `<main>'
 ```
 
-And then execute:
+becomes this:
 
-    $ bundle
+```
+/home/jeff/projects/backtrace/caller_with_context/lib/caller_with_context/caller.rb:24:in `show'
+    def show
+      locations.each do |location|
+        format_single_location location
 
-Or install it yourself as:
+/home/jeff/projects/backtrace/caller_with_context/spec/caller_spec.rb:13:in `block (2 levels) in <module:CallerWithContext>'
+    it 'adds lines of context to each element' do
+      Caller.new(only_cwd: true, lines_of_context: 1).show
+    end
+```
 
-    $ gem install caller_with_context
+Usage:
 
-## Usage
+```
+CallerWithContext::CallerWithContext::Caller.new.show
+```
 
-TODO: Write usage instructions here
+## Options
 
-## Development
+There are three options:
 
-After checking out the repo, run `bin/setup` to install dependencies. Then, run `rake spec` to run the tests. You can also run `bin/console` for an interactive prompt that will allow you to experiment.
+* only_cwd: filter out stack trace lines that don't arise from the current directory tree (default: false)
+* lines_of_context: the number of lines of context above and below (default: 1)
+* colorize: Colorize the stack trace line (default: true)
 
-To install this gem onto your local machine, run `bundle exec rake install`. To release a new version, update the version number in `version.rb`, and then run `bundle exec rake release`, which will create a git tag for the version, push git commits and tags, and push the `.gem` file to [rubygems.org](https://rubygems.org).
+```
+CallerWithContext::Caller.new(colorize: true, only_cwd: true, lines_of_context: 1).show
+```
 
-## Contributing
-
-Bug reports and pull requests are welcome on GitHub at https://github.com/[USERNAME]/caller_with_context. This project is intended to be a safe, welcoming space for collaboration, and contributors are expected to adhere to the [Contributor Covenant](http://contributor-covenant.org) code of conduct.
-
-## License
-
-The gem is available as open source under the terms of the [MIT License](https://opensource.org/licenses/MIT).
-
-## Code of Conduct
-
-Everyone interacting in the CallerWithContext project’s codebases, issue trackers, chat rooms and mailing lists is expected to follow the [code of conduct](https://github.com/[USERNAME]/caller_with_context/blob/master/CODE_OF_CONDUCT.md).

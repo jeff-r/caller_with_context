@@ -9,8 +9,8 @@ Gem::Specification.new do |spec|
   spec.authors       = ["Jeff Roush"]
   spec.email         = ["jeff@jeffroush.com"]
 
-  spec.summary       = %q{Pretty-print callstack, including lines of context around each location.}
-  spec.description   = %q{Pretty-print callstack, including lines of context around each location.}
+  spec.summary       = %q{Pretty-print callstack, including lines of context from the source file around each location.}
+  spec.description   = %q{Pretty-print callstack, including lines of context from the source file around each location.}
   spec.homepage      = "https://github.com/jeff-r/caller_with_context"
   spec.license       = "MIT"
 
@@ -35,6 +35,8 @@ Gem::Specification.new do |spec|
   spec.bindir        = "exe"
   spec.executables   = spec.files.grep(%r{^exe/}) { |f| File.basename(f) }
   spec.require_paths = ["lib"]
+
+  spec.add_dependency "colorize"
 
   spec.add_development_dependency "bundler", "~> 1.17"
   spec.add_development_dependency "rake", "~> 10.0"
