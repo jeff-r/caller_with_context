@@ -3,7 +3,7 @@ RSpec.describe CallerWithContext do
     expect(CallerWithContext::VERSION).not_to be nil
   end
 
-  it "does something useful" do
-    expect(false).to eq(true)
-  end
+  it 'applies a filter to the path'
+  it 'adds lines of context to each element'
+  it 'colorizes the output'
 end
